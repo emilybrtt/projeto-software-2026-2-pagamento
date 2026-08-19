@@ -44,6 +44,13 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: emilybrtt/pagamento-ci:${{ github.sha }}
+        
+        script: |
+          docker stop pagamento
+          docker rm --force pagamento
+          docker run -d -p 8080:8080 --network=rede --name pagamento
+          hector0/pagamento-ci:${{ github.sha }}
+          
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
       with:
