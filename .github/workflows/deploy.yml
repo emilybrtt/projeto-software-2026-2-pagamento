@@ -44,4 +44,16 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: emilybrtt/pagamento-ci:${{ github.sha }}
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST_TEST }}
+        username: "ubuntu"
+        key: ${{ secrets.HOST_KEY }}
+        port: 22
+        script: |
+          docker stop pagamento
+          docker rm --force pagamento
+          docker run  -d -p 8080:8080 --network=rede --name pagamento emilybrtt/pagamento-ci:${{ github.sha }}
+
 
