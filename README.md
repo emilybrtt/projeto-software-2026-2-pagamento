@@ -115,3 +115,44 @@ public class PagamentoServiceTest {
 		return pagamentoEsperado;
 	}
 ```
+
+## Pipeline de verificação de testes
+
+```
+name: Java CI with Maven
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Build with Maven
+      run: mvn clean install
+
+    - name: Check JaCoCo coverage
+      uses: madrapps/jacoco-report@v1.7.2
+      with:
+        paths: |
+          jacoco/jacoco.xml
+        token: ${{ secrets.GITHUB_TOKEN }}
+        min-coverage-overall: 80
+        min-coverage-changed-files: 80
+        fail-build: true
+```
